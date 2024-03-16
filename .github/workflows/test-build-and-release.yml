@@ -16,11 +16,19 @@ jobs:
       - name: Testing with check
         run: |
           ./check_operations
+  static-test:
+    name: Static test
+    runs-on: ubuntu-latest
+    steps:
+      - name: install lint
+        run: sudo apt install splint
+      - name: running static test
+        run: splint --compdef --exportlocal simplecalculator.c operations.c
   building-and-delivery:
     name: Build and delivery
     permissions:
       contents: write
-    needs: [unit-test]
+    needs: [unit-test, static-test]
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -28,9 +36,11 @@ jobs:
       - name: Building
         run: |
           gcc operations.c simplecalculator.c -o simplecalculator
+      - name: making of neptun text file
+        run: echo "skze9h" > neptun.txt
       - name: Creating tar.gz
         run: |
-          tar -czvf simplecalculator.tar.gz simplecalculator
+          tar -czvf simplecalculator.tar.gz simplecalculator neptun.txt
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
