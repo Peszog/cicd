@@ -22,6 +22,7 @@ jobs:
     steps:
       - name: install lint
         run: sudo apt install splint
+        uses: actions/checkout@v4
       - name: running static test
         run: splint --compdef --exportlocal simplecalculator.c operations.c
   building-and-delivery:
